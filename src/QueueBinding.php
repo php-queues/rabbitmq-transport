@@ -21,10 +21,16 @@ final class QueueBinding
      */
     public array $arguments;
 
-    public function __construct(Exchange $exchange, string $routingKey, array $arguments = [])
+    /**
+     * @psalm-readonly
+     */
+    public bool $noWait;
+
+    public function __construct(Exchange $exchange, string $routingKey, bool $noWait = false, array $arguments = [])
     {
         $this->exchange = $exchange;
         $this->routingKey = $routingKey;
         $this->arguments = $arguments;
+        $this->noWait = $noWait;
     }
 }

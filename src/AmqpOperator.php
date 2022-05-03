@@ -17,12 +17,12 @@ interface AmqpOperator
     public function declareExchange(Exchange $exchange): void;
 
     /**
-     * Bind the queue to given exchange using routing key and arguments.
+     * Bind the queue to given exchange using routing key, arguments and no wait flag.
      */
-    public function bindQueue(Queue $queue, Exchange $exchange, string $routingKey, array $arguments = []): void;
+    public function bindQueue(Queue $queue, Exchange $exchange, string $routingKey, bool $noWait = false, array $arguments = []): void;
 
     /**
-     * Bind the source exchange to destination exchange using routing key, argument and no wait flag.
+     * Bind the source exchange to destination exchange using routing key, arguments and no wait flag.
      */
     public function bindExchange(Exchange $source, Exchange $destination, string $routingKey, bool $noWait = false, array $arguments = []): void;
 }

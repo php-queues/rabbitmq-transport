@@ -28,7 +28,7 @@ final class TransportConfigurator
 
         foreach ($bindings as $binding) {
             $this->doDeclareExchange($binding->exchange);
-            $this->amqpOperator->bindQueue($queue, $binding->exchange, $binding->routingKey, $binding->arguments);
+            $this->amqpOperator->bindQueue($queue, $binding->exchange, $binding->routingKey, $binding->noWait, $binding->arguments);
 
             $this->logger->debug('The queue "{queueName}" was linked to exchange "{exchangeName}" with routing key "{routingKey}".', [
                 'queueName' => $queue->name,
