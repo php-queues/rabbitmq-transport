@@ -44,7 +44,7 @@ final class DelayMessageUsingDelayedExchange implements DelayMessage
     {
         $this->transportConfigurator->bindExchange(
             Exchange::delayed($destination->exchange),
-            new ExchangeBinding(Exchange::direct($message->destination->exchange)->makeDurable(), $destination->routingKey),
+            new ExchangeBinding(Exchange::direct($message->destination->exchange)->makeDurable(), $message->destination->routingKey),
         );
 
         $producer->publish(new AmqpDestination($destination->exchange, $destination->routingKey), $message);
