@@ -31,12 +31,12 @@ final class DelayMessageUsingDelayedExchangeTest extends TestCase
 
         $publisher = $this->createMock(PackagePublisher::class);
 
-        $message = new AmqpMessage('some_id', '{"name": "test"}', new AmqpDestination('tests', 'tests'));
+        $message = new AmqpMessage('some_id', '{"name": "test"}', new AmqpDestination('tests', 'tests'), ['x-name' => 'x-value']);
 
         $publisher
             ->expects($this->exactly(1))
             ->method('publish')
-            ->with(new AmqpDestination('delay_tests', 'tests'), $message);
+            ->with(new AmqpDestination('delay_tests', 'tests'), $message->withHeaders(['x-delay' => 5000]));
 
         $delayMessage = new DelayMessageUsingDelayedExchange(new TransportConfigurator($operator));
 
