@@ -73,4 +73,12 @@ final class AmqpMessage implements Message
 
         return $message;
     }
+
+    public function changeDestination(AmqpDestination $destination): AmqpMessage
+    {
+        $message = clone $this;
+        $message->destination = $destination;
+
+        return $message;
+    }
 }

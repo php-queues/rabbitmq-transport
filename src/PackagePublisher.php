@@ -9,5 +9,5 @@ interface PackagePublisher
     /**
      * @throws \Throwable
      */
-    public function publish(AmqpDestination $destination, AmqpMessage ...$messages): void;
+    public function publish(AmqpMessage ...$messages): void;
 }

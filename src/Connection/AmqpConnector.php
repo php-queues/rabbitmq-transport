@@ -33,7 +33,7 @@ abstract class AmqpConnector
     abstract public function configurator(): TransportConfigurator;
 
     /**
-     * @psalm-return Producer<AmqpDestination, AmqpMessage>
+     * @psalm-return Producer<AmqpMessage>
      */
     abstract public function producer(): Producer;
     abstract public function consumer(): Consumer;

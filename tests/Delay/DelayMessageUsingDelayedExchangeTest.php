@@ -36,7 +36,7 @@ final class DelayMessageUsingDelayedExchangeTest extends TestCase
         $publisher
             ->expects($this->exactly(1))
             ->method('publish')
-            ->with(new AmqpDestination('delay_tests', 'tests'), $message->withHeaders(['x-delay' => 5000]));
+            ->with($message->withHeaders(['x-delay' => 5000])->changeDestination(new AmqpDestination('delay_tests', 'tests')));
 
         $delayMessage = new DelayMessageUsingDelayedExchange(new TransportConfigurator($operator));
 

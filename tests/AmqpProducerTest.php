@@ -27,9 +27,9 @@ final class AmqpProducerTest extends TestCase
 
         $publisher->expects($this->exactly(1))
             ->method('publish')
-            ->with($destination, $message);
+            ->with($message->changeDestination($destination));
 
         $producer = new AmqpProducer($publisher);
-        $producer->publish($destination, $message);
+        $producer->publish($message);
     }
 }

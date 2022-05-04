@@ -42,7 +42,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $publisher
             ->expects($this->exactly(1))
             ->method('publish')
-            ->with(new AmqpDestination('', 'tests_delay'), $message);
+            ->with($message->changeDestination(new AmqpDestination('', 'tests_delay')));
 
         $transportConfigurator = new TransportConfigurator($operator);
 
@@ -78,7 +78,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $publisher
             ->expects($this->exactly(1))
             ->method('publish')
-            ->with(new AmqpDestination('', 'tests_delay'), $message);
+            ->with($message->changeDestination(new AmqpDestination('', 'tests_delay')));
 
         $transportConfigurator = new TransportConfigurator($operator);
 
@@ -116,7 +116,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $publisher
             ->expects($this->exactly(1))
             ->method('publish')
-            ->with(new AmqpDestination('', 'tests_delay'), $message);
+            ->with($message->changeDestination(new AmqpDestination('', 'tests_delay')));
 
         $transportConfigurator = new TransportConfigurator($operator);
 

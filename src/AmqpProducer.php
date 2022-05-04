@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace PhpQueues\RabbitmqTransport;
 
-use PhpQueues\Transport\Destination;
 use PhpQueues\Transport\Message;
 use PhpQueues\Transport\Producer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
- * @psalm-template D as AmqpDestination
  * @psalm-template M as AmqpMessage
  *
- * @template-implements Producer<D, M>
+ * @template-implements Producer<M>
  */
 final class AmqpProducer implements Producer
 {
@@ -30,14 +28,12 @@ final class AmqpProducer implements Producer
     /**
      * {@inheritdoc}
      */
-    public function publish(Destination $destination, Message ...$messages): void
+    public function publish(Message ...$messages): void
     {
         try {
-            $this->packagePublisher->publish($destination, ...$messages);
+            $this->packagePublisher->publish(...$messages);
         } catch (\Throwable $e) {
-            $this->logger->critical('Cannot publish package to exchange "{exchangeName}" with routing key "{routingKey}" due to an error "{error}".', [
-                'exchangeName' => $destination->exchange,
-                'routingKey' => $destination->routingKey,
+            $this->logger->critical('Cannot publish packages due to an error "{error}".', [
                 'error' => $e->getMessage(),
                 'exception' => $e,
             ]);

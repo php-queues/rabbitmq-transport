@@ -60,6 +60,6 @@ final class DelayMessageUsingDeadLetterExchange implements DelayMessage
             'x-dead-letter-routing-key' => $message->destination->routingKey,
         ]));
 
-        $producer->publish(new AmqpDestination('', $destination->queue), $message);
+        $producer->publish($message->changeDestination(new AmqpDestination('', $destination->queue)));
     }
 }
