@@ -25,7 +25,12 @@ final class AmqpDelayDestination implements Destination
      */
     public string $routingKey;
 
-    public function __construct(string $queue, string $routingKey, string $exchange = '')
+    /**
+     * @psalm-readonly
+     */
+    public ?string $delayedQueueFormula;
+
+    public function __construct(string $queue, string $routingKey, string $exchange = '', ?string $delayedQueueFormula = null)
     {
         if ('' === $queue) {
             throw new \InvalidArgumentException('Queue cannot be an empty string.');
@@ -34,5 +39,6 @@ final class AmqpDelayDestination implements Destination
         $this->queue = $queue;
         $this->exchange = $exchange;
         $this->routingKey = $routingKey;
+        $this->delayedQueueFormula = $delayedQueueFormula;
     }
 }

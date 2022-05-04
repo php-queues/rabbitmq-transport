@@ -53,13 +53,19 @@ final class DelayMessageUsingDeadLetterExchange implements DelayMessage
      */
     public function delay(Producer $producer, Message $message, Destination $destination, int $delay): void
     {
-        $this->transportConfigurator->bindQueue(Queue::default($destination->queue)->makeDurable()->withArguments([
+        $delayedQueue = \str_replace(
+            ['%queue_name%', '%ttl%', '%exchange%'],
+            [$message->destination->routingKey, $delay, $message->destination->exchange],
+            $destination->delayedQueueFormula ?: '%queue_name%.delay.%ttl%'
+        );
+
+        $this->transportConfigurator->bindQueue(Queue::default($delayedQueue)->makeDurable()->withArguments([
             'x-message-ttl' => $delay,
             'x-expires' => ($this->expiresFormula)($delay),
-            'x-dead-letter-exchange' => $destination->exchange,
+            'x-dead-letter-exchange' => '',
             'x-dead-letter-routing-key' => $message->destination->routingKey,
         ]));
 
-        $producer->publish($message->changeDestination(new AmqpDestination('', $destination->queue)));
+        $producer->publish($message->changeDestination(new AmqpDestination('', $delayedQueue)));
     }
 }

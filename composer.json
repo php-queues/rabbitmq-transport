@@ -37,6 +37,7 @@
     },
     "scripts": {
         "psalm": "./vendor/bin/psalm --no-cache",
-        "test": "./vendor/bin/phpunit --do-not-cache"
+        "test": "./vendor/bin/phpunit --do-not-cache",
+        "all": "./vendor/bin/phpunit --do-not-cache && ./vendor/bin/psalm --no-cache"
     }
 }

@@ -27,7 +27,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $operator
             ->expects($this->exactly(1))
             ->method('declareQueue')
-            ->with(Queue::default('tests_delay')->makeDurable()->withArguments([
+            ->with(Queue::default('tests.delay.5000')->makeDurable()->withArguments([
                 'x-message-ttl' => 5000,
                 'x-expires' => 5000 * 2,
                 'x-dead-letter-exchange' => '',
@@ -42,7 +42,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $publisher
             ->expects($this->exactly(1))
             ->method('publish')
-            ->with($message->changeDestination(new AmqpDestination('', 'tests_delay')));
+            ->with($message->changeDestination(new AmqpDestination('', 'tests.delay.5000')));
 
         $transportConfigurator = new TransportConfigurator($operator);
 
@@ -63,7 +63,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $operator
             ->expects($this->exactly(1))
             ->method('declareQueue')
-            ->with(Queue::default('tests_delay')->makeDurable()->withArguments([
+            ->with(Queue::default('tests.delay.5000')->makeDurable()->withArguments([
                 'x-message-ttl' => 5000,
                 'x-expires' => 5000 + 1000,
                 'x-dead-letter-exchange' => '',
@@ -78,7 +78,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $publisher
             ->expects($this->exactly(1))
             ->method('publish')
-            ->with($message->changeDestination(new AmqpDestination('', 'tests_delay')));
+            ->with($message->changeDestination(new AmqpDestination('', 'tests.delay.5000')));
 
         $transportConfigurator = new TransportConfigurator($operator);
 
@@ -89,7 +89,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $delayMessageUsingDeadLetterExchange->delay(
             new AmqpProducer($publisher),
             $message,
-            new AmqpDelayDestination('tests_delay', 'tests'),
+            new AmqpDelayDestination('tests_delay', 'tests.delay.5000'),
             5000
         );
     }
@@ -101,10 +101,10 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $operator
             ->expects($this->exactly(1))
             ->method('declareQueue')
-            ->with(Queue::default('tests_delay')->makeDurable()->withArguments([
+            ->with(Queue::default('tests.delay.5000')->makeDurable()->withArguments([
                 'x-message-ttl' => 5000,
                 'x-expires' => 5000 + 1000,
-                'x-dead-letter-exchange' => 'test_exchange',
+                'x-dead-letter-exchange' => '',
                 'x-dead-letter-routing-key' => 'tests',
             ]))
         ;
@@ -116,7 +116,7 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
         $publisher
             ->expects($this->exactly(1))
             ->method('publish')
-            ->with($message->changeDestination(new AmqpDestination('', 'tests_delay')));
+            ->with($message->changeDestination(new AmqpDestination('', 'tests.delay.5000')));
 
         $transportConfigurator = new TransportConfigurator($operator);
 
@@ -128,6 +128,44 @@ final class DelayMessageUsingDeadLetterExchangeTest extends TestCase
             new AmqpProducer($publisher),
             $message,
             new AmqpDelayDestination('tests_delay', 'tests', 'test_exchange'),
+            5000
+        );
+    }
+
+    public function testDelayedQueueWithCustomNameFormula(): void
+    {
+        $operator = $this->createMock(AmqpOperator::class);
+
+        $operator
+            ->expects($this->exactly(1))
+            ->method('declareQueue')
+            ->with(Queue::default('tests.tests.delay.5000')->makeDurable()->withArguments([
+                'x-message-ttl' => 5000,
+                'x-expires' => 5000 + 1000,
+                'x-dead-letter-exchange' => '',
+                'x-dead-letter-routing-key' => 'tests',
+            ]))
+        ;
+
+        $publisher = $this->createMock(PackagePublisher::class);
+
+        $message = new AmqpMessage('some_id', '{"name": "test"}', new AmqpDestination('tests', 'tests'));
+
+        $publisher
+            ->expects($this->exactly(1))
+            ->method('publish')
+            ->with($message->changeDestination(new AmqpDestination('', 'tests.tests.delay.5000')));
+
+        $transportConfigurator = new TransportConfigurator($operator);
+
+        $delayMessageUsingDeadLetterExchange = new DelayMessageUsingDeadLetterExchange($transportConfigurator, function (int $delay): int {
+            return $delay + 1000;
+        });
+
+        $delayMessageUsingDeadLetterExchange->delay(
+            new AmqpProducer($publisher),
+            $message,
+            new AmqpDelayDestination('tests_delay', 'tests', 'test_exchange', '%exchange%.%queue_name%.delay.%ttl%'),
             5000
         );
     }
