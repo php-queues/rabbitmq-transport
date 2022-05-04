@@ -38,6 +38,7 @@ abstract class AmqpConnector
      */
     abstract public function producer(): Producer;
     abstract public function consumer(): Consumer;
+    abstract public function stop(): void;
 
     /**
      * @return DelayMessage<AmqpMessage, AmqpDelayDestination, AmqpProducer>
