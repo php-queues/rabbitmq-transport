@@ -6,6 +6,7 @@ namespace PhpQueues\RabbitmqTransport\Connection;
 
 use PhpQueues\RabbitmqTransport\AmqpMessage;
 use PhpQueues\RabbitmqTransport\AmqpProducer;
+use PhpQueues\RabbitmqTransport\Delay\AmqpDelayDestination;
 use PhpQueues\RabbitmqTransport\TransportConfigurator;
 use PhpQueues\Transport\Consumer;
 use PhpQueues\Transport\Delay\DelayMessage;
@@ -38,6 +39,9 @@ abstract class AmqpConnector
     abstract public function producer(): Producer;
     abstract public function consumer(): Consumer;
 
+    /**
+     * @return DelayMessage<AmqpMessage, AmqpDelayDestination, AmqpProducer>
+     */
     final public function delayer(): DelayMessage
     {
         switch ($this->context->delayType) {
